@@ -4,3 +4,6 @@
     2）未完成任务
     3）查看是否有锁功能
     4）
+
+
+使用方法: go get github.com/wzcssw/gomq
