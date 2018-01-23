@@ -9,35 +9,37 @@ import (
 
 //  为创建的列表使用插入方法可能会出现问题
 
+const HeadHey = "goqueue:"
+
 type Goqueue struct {
 	// redis 配置
 	RedisConf RedisConfig
 
-	// redis 连接   form: github.com/go-redis/redis
+	// redis 连接   from: github.com/go-redis/redis
 	RedisClient *redis.Client
 }
 
 // 获取队列长度
 func (queue *Goqueue) GetLength(key string) (int64, error) {
-	intCmd := queue.RedisClient.LLen(key)
+	intCmd := queue.RedisClient.LLen(HeadHey + key)
 	return intCmd.Val(), intCmd.Err()
 }
 
 // 获取列表指定范围内的元素
 func (queue *Goqueue) GetRange(key string, start int64, stop int64) ([]string, error) {
-	stringSliceCmd := queue.RedisClient.LRange(key, start, stop)
+	stringSliceCmd := queue.RedisClient.LRange(HeadHey+key, start, stop)
 	return stringSliceCmd.Val(), stringSliceCmd.Err()
 }
 
 // 在队列尾部添加值
 func (queue *Goqueue) Push(key string, values interface{}) (int64, error) {
-	intCmd := queue.RedisClient.RPush(key, values)
+	intCmd := queue.RedisClient.RPush(HeadHey+key, values)
 	return intCmd.Val(), intCmd.Err()
 }
 
 // 在队列头部提取值
 func (queue *Goqueue) Pop(timeout time.Duration, key string) ([]string, error) {
-	stringSliceCmd := queue.RedisClient.BLPop(timeout, key)
+	stringSliceCmd := queue.RedisClient.BLPop(timeout, HeadHey+key)
 	return stringSliceCmd.Val(), stringSliceCmd.Err()
 }
 
